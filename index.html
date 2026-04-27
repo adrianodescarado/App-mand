@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandrake v2 - Sistema de Automação de Conversas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(10, 14, 39, 0.8);
+            border-bottom: 2px solid #00d9ff;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        header h1 {
+            color: #00d9ff;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        header p {
+            color: #b700ff;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            color: #00d9ff;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 217, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: #00d9ff;
+            color: #0a0e27;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid #b700ff;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .sidebar h3 {
+            color: #b700ff;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .node-template {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: grab;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: bold;
+            color: #00d9ff;
+        }
+
+        .node-template:hover {
+            background: rgba(0, 217, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background: rgba(10, 14, 39, 0.6);
+            border: 2px solid #00d9ff;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .canvas-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        .nodes-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(183, 0, 255, 0.2));
+            border: 2px solid #00d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+            cursor: move;
+            user-select: none;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .node:hover {
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.6);
+            border-color: #b700ff;
+        }
+
+        .node.selected {
+            border-color: #b700ff;
+            box-shadow: 0 0 40px rgba(183, 0, 255, 0.8);
+        }
+
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #00d9ff;
+        }
+
+        .node-type {
+            color: #b700ff;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .node-delete {
+            background: #ff3333;
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .node-delete:hover {
+            background: #ff5555;
+            transform: scale(1.1);
+        }
+
+        .node-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .node-input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid #00d9ff;
+            color: #00d9ff;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .node-input:focus {
+            outline: none;
+            border-color: #b700ff;
+            box-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+        }
+
+        .node-handles {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #00d9ff;
+        }
+
+        .handle {
+            width: 12px;
+            height: 12px;
+            background: #00d9ff;
+            border-radius: 50%;
+            cursor: crosshair;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
+            position: relative;
+        }
+
+        .handle:hover {
+            background: #b700ff;
+            transform: scale(1.5);
+            box-shadow: 0 0 15px rgba(183, 0, 255, 0.8);
+        }
+
+        .handle.input::before {
+            content: 'IN';
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            font-size: 10px;
+            color: #00d9ff;
+            white-space: nowrap;
+        }
+
+        .handle.output::after {
+            content: 'OUT';
+            position: absolute;
+            top: -20px;
+            right: -15px;
+            font-size: 10px;
+            color: #00d9ff;
+            white-space: nowrap;
+        }
+
+        .properties-panel {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid #b700ff;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .properties-panel h3 {
+            color: #b700ff;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .property-group {
+            margin-bottom: 15px;
+        }
+
+        .property-label {
+            color: #00d9ff;
+            font-size: 12px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .property-input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid #00d9ff;
+            color: #00d9ff;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .property-input:focus {
+            outline: none;
+            border-color: #b700ff;
+            box-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d9ff, #b700ff);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            color: #00d9ff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 217, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: #ff3333;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5555;
+        }
+
+        .viewer-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .chat-window {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #ece5dd;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .message.user .message-bubble {
+            background: #dcf8c6;
+            color: #333;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: #25d366;
+        }
+
+        .chat-send {
+            background: #25d366;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .chat-send:hover {
+            background: #20ba5a;
+            transform: scale(1.1);
+        }
+
+        .theme-selector {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid #b700ff;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .theme-selector h3 {
+            color: #b700ff;
+            margin-bottom: 15px;
+        }
+
+        .theme-option {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .theme-option:hover {
+            background: rgba(0, 217, 255, 0.2);
+        }
+
+        .theme-option.active {
+            background: #00d9ff;
+            color: #0a0e27;
+        }
+
+        .stats {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid #b700ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .stats h3 {
+            color: #b700ff;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #b700ff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #00d9ff;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: rgba(0, 217, 255, 0.7);
+        }
+
+        @media (max-width: 1024px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar, .properties-panel {
+                display: none;
+            }
+
+            .viewer-container {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-window {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐍 Mandrake v2 - Sistema de Automação de Conversas</h1>
+            <p>Crie fluxos de conversas com conexão entre nós</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('editor')">📝 Editor de Fluxos</button>
+            <button class="tab-btn" onclick="switchTab('viewer')">💬 Visualizador</button>
+            <button class="tab-btn" onclick="switchTab('export')">📤 Exportar/Importar</button>
+        </div>
+
+        <!-- EDITOR TAB -->
+        <div id="editor" class="tab-content active">
+            <div class="editor-container">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <h3>Tipos de Nós</h3>
+                    <div class="node-template" draggable="true" ondragstart="startDrag(event, 'message')">
+                        💬 Mensagem
+                    </div>
+                    <div class="node-template" draggable="true" ondragstart="startDrag(event, 'question')">
+                        ❓ Pergunta
+                    </div>
+                    <div class="node-template" draggable="true" ondragstart="startDrag(event, 'response')">
+                        ✅ Resposta
+                    </div>
+                    <div class="node-template" draggable="true" ondragstart="startDrag(event, 'image')">
+                        🖼️ Imagem
+                    </div>
+                    <div class="node-template" draggable="true" ondragstart="startDrag(event, 'video')">
+                        🎥 Vídeo
+                    </div>
+                    <div class="node-template" draggable="true" ondragstart="startDrag(event, 'link')">
+                        🔗 Link
+                    </div>
+                </div>
+
+                <!-- Canvas -->
+                <div class="canvas-wrapper">
+                    <div class="canvas-grid"></div>
+                    <svg id="canvas" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;"></svg>
+                    <div class="nodes-container" id="nodes-container"></div>
+                </div>
+
+                <!-- Properties Panel -->
+                <div class="properties-panel">
+                    <h3>Propriedades</h3>
+                    <div id="properties" style="color: #00d9ff; font-size: 13px;">
+                        Selecione um nó para editar
+                    </div>
+                    <div class="button-group" style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="saveFlow()">💾 Salvar</button>
+                        <button class="btn btn-secondary" onclick="loadFlow()">📂 Carregar</button>
+                        <button class="btn btn-danger" onclick="clearCanvas()">🗑️ Limpar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEWER TAB -->
+        <div id="viewer" class="tab-content">
+            <div class="viewer-container">
+                <div class="chat-window">
+                    <div class="chat-header">
+                        <span>Mandrake Chat</span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot">
+                            <div class="message-bubble">Olá! Bem-vindo ao Mandrake v2.</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Digite sua mensagem..." onkeypress="handleChatInput(event)">
+                        <button class="chat-send" onclick="sendMessage()">→</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="theme-selector">
+                        <h3>Temas</h3>
+                        <div class="theme-option active" onclick="setTheme('whatsapp')">🟢 WhatsApp</div>
+                        <div class="theme-option" onclick="setTheme('telegram')">🔵 Telegram</div>
+                        <div class="theme-option" onclick="setTheme('instagram')">💜 Instagram</div>
+                        <div class="theme-option" onclick="setTheme('cyberpunk')">⚡ Cyberpunk</div>
+                    </div>
+
+                    <div class="stats">
+                        <h3>Estatísticas</h3>
+                        <div class="stat-item">
+                            <span>Total de Nós</span>
+                            <span class="stat-value" id="stat-nodes">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Conexões</span>
+                            <span class="stat-value" id="stat-edges">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Mensagens</span>
+                            <span class="stat-value" id="stat-messages">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPORT TAB -->
+        <div id="export" class="tab-content">
+            <div style="background: rgba(26, 31, 58, 0.8); border: 2px solid #b700ff; border-radius: 8px; padding: 30px;">
+                <h2 style="color: #00d9ff; margin-bottom: 20px;">Exportar e Importar</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3 style="color: #b700ff; margin-bottom: 15px;">📤 Exportar</h3>
+                        <button class="btn btn-primary" onclick="exportFlow()">Exportar JSON</button>
+                    </div>
+                    <div>
+                        <h3 style="color: #b700ff; margin-bottom: 15px;">📥 Importar</h3>
+                        <input type="file" id="import-file" accept=".json" style="margin-bottom: 10px;">
+                        <button class="btn btn-primary" onclick="importFlow()">Importar JSON</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let nodes = [];
+        let edges = [];
+        let selectedNode = null;
+        let messageCount = 0;
+        let draggedNodeType = null;
+        let connectingFrom = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            loadFlowFromStorage();
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function startDrag(e, nodeType) {
+            draggedNodeType = nodeType;
+            e.dataTransfer.effectAllowed = 'copy';
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        }
+
+        function dropNode(e) {
+            e.preventDefault();
+            if (!draggedNodeType) return;
+
+            const canvas = document.querySelector('.canvas-wrapper');
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            createNode(draggedNodeType, x, y);
+            draggedNodeType = null;
+        }
+
+        function createNode(type, x, y) {
+            const id = 'node-' + Date.now();
+            const node = {
+                id,
+                type,
+                x: Math.max(0, x - 100),
+                y: Math.max(0, y - 30),
+                content: getDefaultContent(type),
+                metadata: {}
+            };
+
+            nodes.push(node);
+            renderNode(node);
+            updateStats();
+            drawEdges();
+        }
+
+        function getDefaultContent(type) {
+            const defaults = {
+                message: 'Nova mensagem',
+                question: 'Qual é sua resposta?',
+                response: 'Obrigado!',
+                image: 'https://via.placeholder.com/300',
+                video: 'https://youtube.com/watch?v=...',
+                link: 'https://exemplo.com'
+            };
+            return defaults[type] || 'Novo nó';
+        }
+
+        function renderNode(node) {
+            const container = document.getElementById('nodes-container');
+            const nodeEl = document.createElement('div');
+            nodeEl.className = 'node';
+            nodeEl.id = node.id;
+            nodeEl.style.left = node.x + 'px';
+            nodeEl.style.top = node.y + 'px';
+
+            const typeIcons = {
+                message: '💬',
+                question: '❓',
+                response: '✅',
+                image: '🖼️',
+                video: '🎥',
+                link: '🔗'
+            };
+
+            nodeEl.innerHTML = `
+                <div class="node-header">
+                    <span class="node-type">${typeIcons[node.type]} ${node.type.toUpperCase()}</span>
+                    <button class="node-delete" onclick="deleteNode('${node.id}')">✕</button>
+                </div>
+                <div class="node-content">
+                    <textarea class="node-input" placeholder="Conteúdo..." onchange="updateNodeContent('${node.id}', this.value)">${node.content}</textarea>
+                </div>
+                <div class="node-handles">
+                    <div class="handle input" data-node="${node.id}" data-type="input" onmousedown="startConnection(event, '${node.id}', 'input')" title="Entrada"></div>
+                    <div class="handle output" data-node="${node.id}" data-type="output" onmousedown="startConnection(event, '${node.id}', 'output')" title="Saída"></div>
+                </div>
+            `;
+
+            nodeEl.addEventListener('mousedown', (e) => {
+                if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON' && !e.target.classList.contains('handle')) {
+                    dragNode(e, node.id);
+                }
+            });
+
+            nodeEl.addEventListener('click', () => selectNode(node.id));
+
+            container.appendChild(nodeEl);
+        }
+
+        function selectNode(nodeId) {
+            selectedNode = nodeId;
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('selected'));
+            document.getElementById(nodeId).classList.add('selected');
+
+            const node = nodes.find(n => n.id === nodeId);
+            updatePropertiesPanel(node);
+        }
+
+        function updateNodeContent(nodeId, content) {
+            const node = nodes.find(n => n.id === nodeId);
+            if (node) {
+                node.content = content;
+            }
+        }
+
+        function deleteNode(nodeId) {
+            nodes = nodes.filter(n => n.id !== nodeId);
+            edges = edges.filter(e => e.from !== nodeId && e.to !== nodeId);
+            document.getElementById(nodeId).remove();
+            updateStats();
+            drawEdges();
+            if (selectedNode === nodeId) {
+                selectedNode = null;
+                document.getElementById('properties').innerHTML = 'Selecione um nó para editar';
+            }
+        }
+
+        function dragNode(e, nodeId) {
+            const node = nodes.find(n => n.id === nodeId);
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const startNodeX = node.x;
+            const startNodeY = node.y;
+
+            function onMouseMove(moveEvent) {
+                const deltaX = moveEvent.clientX - startX;
+                const deltaY = moveEvent.clientY - startY;
+                node.x = Math.max(0, startNodeX + deltaX);
+                node.y = Math.max(0, startNodeY + deltaY);
+                document.getElementById(nodeId).style.left = node.x + 'px';
+                document.getElementById(nodeId).style.top = node.y + 'px';
+                drawEdges();
+            }
+
+            function onMouseUp() {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        }
+
+        function startConnection(e, nodeId, handleType) {
+            e.stopPropagation();
+            connectingFrom = { nodeId, handleType };
+            
+            const canvas = document.getElementById('canvas');
+            const node = nodes.find(n => n.id === nodeId);
+            const nodeEl = document.getElementById(nodeId);
+            const rect = nodeEl.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            const startX = rect.left - canvasRect.left + (handleType === 'input' ? 0 : rect.width);
+            const startY = rect.top - canvasRect.top + rect.height - 10;
+
+            function onMouseMove(moveEvent) {
+                const endX = moveEvent.clientX - canvasRect.left;
+                const endY = moveEvent.clientY - canvasRect.top;
+
+                canvas.innerHTML = '';
+                
+                // Draw existing edges
+                edges.forEach(edge => {
+                    const fromNode = nodes.find(n => n.id === edge.from);
+                    const toNode = nodes.find(n => n.id === edge.to);
+                    if (fromNode && toNode) {
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', fromNode.x + 200);
+                        line.setAttribute('y1', fromNode.y + 60);
+                        line.setAttribute('x2', toNode.x);
+                        line.setAttribute('y2', toNode.y + 60);
+                        line.setAttribute('stroke', '#00d9ff');
+                        line.setAttribute('stroke-width', '2');
+                        canvas.appendChild(line);
+                    }
+                });
+
+                // Draw connecting line
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', startX);
+                line.setAttribute('y1', startY);
+                line.setAttribute('x2', endX);
+                line.setAttribute('y2', endY);
+                line.setAttribute('stroke', '#b700ff');
+                line.setAttribute('stroke-width', '2');
+                line.setAttribute('stroke-dasharray', '5,5');
+                canvas.appendChild(line);
+            }
+
+            function onMouseUp(upEvent) {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                const target = upEvent.target;
+                if (target.classList.contains('handle')) {
+                    const targetNodeId = target.getAttribute('data-node');
+                    const targetType = target.getAttribute('data-type');
+                    
+                    if (handleType === 'output' && targetType === 'input' && targetNodeId !== nodeId) {
+                        const edgeExists = edges.some(e => e.from === nodeId && e.to === targetNodeId);
+                        if (!edgeExists) {
+                            edges.push({ from: nodeId, to: targetNodeId });
+                        }
+                    }
+                }
+
+                connectingFrom = null;
+                drawEdges();
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        }
+
+        function drawEdges() {
+            const canvas = document.getElementById('canvas');
+            canvas.innerHTML = '';
+
+            edges.forEach(edge => {
+                const fromNode = nodes.find(n => n.id === edge.from);
+                const toNode = nodes.find(n => n.id === edge.to);
+                
+                if (fromNode && toNode) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', fromNode.x + 200);
+                    line.setAttribute('y1', fromNode.y + 60);
+                    line.setAttribute('x2', toNode.x);
+                    line.setAttribute('y2', toNode.y + 60);
+                    line.setAttribute('stroke', '#00d9ff');
+                    line.setAttribute('stroke-width', '2');
+                    line.setAttribute('marker-end', 'url(#arrowhead)');
+                    canvas.appendChild(line);
+
+                    // Add arrow marker
+                    if (!document.getElementById('arrowhead')) {
+                        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                        const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                        marker.setAttribute('id', 'arrowhead');
+                        marker.setAttribute('markerWidth', '10');
+                        marker.setAttribute('markerHeight', '10');
+                        marker.setAttribute('refX', '9');
+                        marker.setAttribute('refY', '3');
+                        marker.setAttribute('orient', 'auto');
+                        const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        polygon.setAttribute('points', '0 0, 10 3, 0 6');
+                        polygon.setAttribute('fill', '#00d9ff');
+                        marker.appendChild(polygon);
+                        defs.appendChild(marker);
+                        canvas.appendChild(defs);
+                    }
+                }
+            });
+        }
+
+        function updatePropertiesPanel(node) {
+            const panel = document.getElementById('properties');
+            panel.innerHTML = `
+                <div class="property-group">
+                    <label class="property-label">ID</label>
+                    <input type="text" class="property-input" value="${node.id}" readonly>
+                </div>
+                <div class="property-group">
+                    <label class="property-label">Tipo</label>
+                    <input type="text" class="property-input" value="${node.type}" readonly>
+                </div>
+                <div class="property-group">
+                    <label class="property-label">Conteúdo</label>
+                    <textarea class="property-input" style="min-height: 100px;" onchange="updateNodeContent('${node.id}', this.value)">${node.content}</textarea>
+                </div>
+                <div class="property-group">
+                    <label class="property-label">Conexões</label>
+                    <div style="color: #00d9ff; font-size: 12px;">
+                        Entrada: ${edges.filter(e => e.to === node.id).length}<br>
+                        Saída: ${edges.filter(e => e.from === node.id).length}
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveFlow() {
+            const flowData = { nodes, edges, timestamp: new Date().toISOString() };
+            localStorage.setItem('mandrake-flow', JSON.stringify(flowData));
+            alert('✅ Fluxo salvo!');
+        }
+
+        function loadFlow() {
+            const data = localStorage.getItem('mandrake-flow');
+            if (data) {
+                const flowData = JSON.parse(data);
+                nodes = flowData.nodes || [];
+                edges = flowData.edges || [];
+                renderCanvas();
+                alert('✅ Fluxo carregado!');
+            } else {
+                alert('❌ Nenhum fluxo salvo');
+            }
+        }
+
+        function loadFlowFromStorage() {
+            const data = localStorage.getItem('mandrake-flow');
+            if (data) {
+                const flowData = JSON.parse(data);
+                nodes = flowData.nodes || [];
+                edges = flowData.edges || [];
+                renderCanvas();
+            }
+        }
+
+        function renderCanvas() {
+            const container = document.getElementById('nodes-container');
+            container.innerHTML = '';
+            nodes.forEach(node => renderNode(node));
+            drawEdges();
+        }
+
+        function clearCanvas() {
+            if (confirm('Limpar todos os nós?')) {
+                nodes = [];
+                edges = [];
+                selectedNode = null;
+                renderCanvas();
+                updateStats();
+            }
+        }
+
+        function exportFlow() {
+            const flowData = { nodes, edges, timestamp: new Date().toISOString(), version: '2.0' };
+            const dataStr = JSON.stringify(flowData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `mandrake-flow-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importFlow() {
+            const fileInput = document.getElementById('import-file');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Selecione um arquivo');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const flowData = JSON.parse(e.target.result);
+                    nodes = flowData.nodes || [];
+                    edges = flowData.edges || [];
+                    renderCanvas();
+                    updateStats();
+                    alert('✅ Fluxo importado!');
+                } catch (err) {
+                    alert('❌ Erro: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addChatMessage(message, 'user');
+            input.value = '';
+            messageCount++;
+            updateStats();
+
+            setTimeout(() => {
+                const responses = ['Entendi! 👍', 'Ótimo!', 'Perfeito! 🎉', 'Claro!', 'Entendido!'];
+                addChatMessage(responses[Math.floor(Math.random() * responses.length)], 'bot');
+            }, 500);
+        }
+
+        function handleChatInput(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function addChatMessage(text, sender) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function setTheme(theme) {
+            document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const themes = {
+                whatsapp: { header: 'linear-gradient(135deg, #25d366, #128c7e)', bg: '#ece5dd' },
+                telegram: { header: 'linear-gradient(135deg, #0088cc, #005a96)', bg: '#f5f5f5' },
+                instagram: { header: 'linear-gradient(135deg, #833ab4, #fd1d1d)', bg: '#fafafa' },
+                cyberpunk: { header: 'linear-gradient(135deg, #00d9ff, #b700ff)', bg: '#0a0e27' }
+            };
+
+            const themeData = themes[theme];
+            const chatHeader = document.querySelector('.chat-header');
+            const chatMessages = document.querySelector('.chat-messages');
+            chatHeader.style.background = themeData.header;
+            chatMessages.style.background = themeData.bg;
+        }
+
+        function updateStats() {
+            document.getElementById('stat-nodes').textContent = nodes.length;
+            document.getElementById('stat-edges').textContent = edges.length;
+            document.getElementById('stat-messages').textContent = messageCount;
+        }
+
+        // Allow drop on canvas
+        document.querySelector('.canvas-wrapper').addEventListener('dragover', allowDrop);
+        document.querySelector('.canvas-wrapper').addEventListener('drop', dropNode);
+    </script>
+</body>
+</html>
