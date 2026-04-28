@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nebula — Fluxos Conversacionais para Vendas</title>
+<title>Mandrake — Fluxos Conversacionais para Vendas</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -294,7 +294,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
 ════════════════════════════════════════ -->
 <div id="page-landing" class="page active">
   <nav class="lnav">
-    <div class="logo" onclick="goHome()"><div class="lm">N</div>Nebula</div>
+    <div class="logo" onclick="goHome()"><div class="lm">M</div>Mandrake</div>
     <div class="lnav-links">
       <a>Recursos</a><a>Canais</a><a>Como Funciona</a>
     </div>
@@ -327,7 +327,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
         <div class="mdot" style="background:#ff5f57"></div>
         <div class="mdot" style="background:#ffbd2e"></div>
         <div class="mdot" style="background:#28c840"></div>
-        <div class="murl"><span>app.nebula.com.br/editor/fluxo-vendas</span></div>
+        <div class="murl"><span>app.mandrake.com.br/editor/fluxo-vendas</span></div>
       </div>
       <div class="mbody">
         <div class="mside">
@@ -376,7 +376,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
   <div class="sec">
     <div class="sec-lbl">✨ Funcionalidades</div>
     <div class="sec-title">Tudo para automatizar</div>
-    <div class="sec-sub">Nebula oferece todas as ferramentas para criar fluxos conversacionais profissionais.</div>
+    <div class="sec-sub">Mandrake oferece todas as ferramentas para criar fluxos conversacionais profissionais.</div>
     <div class="feats">
       <div class="feat"><div class="feat-i">🎯</div><h3>Editor Visual</h3><p>Drag-and-drop com nós inteligentes e visualização em tempo real.</p></div>
       <div class="feat"><div class="feat-i">📱</div><h3>5 Canais</h3><p>WhatsApp, Instagram, Messenger, Telegram e Web em uma plataforma.</p></div>
@@ -415,7 +415,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
   <footer>
     <div class="foot-in">
       <div class="foot-brand">
-        <div class="logo" style="cursor:default"><div class="lm">N</div>Nebula</div>
+        <div class="logo" style="cursor:default"><div class="lm">M</div>Mandrake</div>
         <p>Automação de conversas sem código. Construído para quem quer vender mais.</p>
       </div>
       <div class="foot-links">
@@ -425,7 +425,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
       </div>
     </div>
     <div class="foot-bot">
-      <span>© 2026 Nebula. Todos os direitos reservados.</span>
+      <span>© 2026 Mandrake. Todos os direitos reservados.</span>
       <span style="color:var(--acc);font-size:11px">Feito com ♥ no Brasil</span>
     </div>
   </footer>
@@ -439,7 +439,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
   <div class="dside">
     <div class="dside-top">
       <div class="logo" style="font-size:17px;cursor:pointer" onclick="goHome()">
-        <div class="lm" style="width:24px;height:24px;font-size:11px">N</div>Nebula
+        <div class="lm" style="width:24px;height:24px;font-size:11px">N</div>Mandrake
       </div>
     </div>
     <nav class="dnav">
@@ -557,17 +557,17 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
     <!-- Paleta -->
     <div class="epal">
       <div class="eptitle">Nós Disponíveis</div>
-      <div class="epi" style="color:#a3b1ff" draggable="true" ondragstart="pd(event,'message')"><div class="edot" style="background:#a3b1ff"></div>Mensagem</div>
-      <div class="epi" style="color:#80e8d0" draggable="true" ondragstart="pd(event,'question')"><div class="edot" style="background:#80e8d0"></div>Pergunta</div>
-      <div class="epi" style="color:#ffd080" draggable="true" ondragstart="pd(event,'image')"><div class="edot" style="background:#ffd080"></div>Imagem</div>
-      <div class="epi" style="color:#ff9080" draggable="true" ondragstart="pd(event,'video')"><div class="edot" style="background:#ff9080"></div>Vídeo</div>
-      <div class="epi" style="color:#c080ff" draggable="true" ondragstart="pd(event,'link')"><div class="edot" style="background:#c080ff"></div>Link</div>
-      <div class="epi" style="color:#80c8ff" draggable="true" ondragstart="pd(event,'condition')"><div class="edot" style="background:#80c8ff"></div>Condição</div>
-      <div class="epi" style="color:#80ffb0" draggable="true" ondragstart="pd(event,'delay')"><div class="edot" style="background:#80ffb0"></div>Delay</div>
-      <div class="epi" style="color:#ff8080" draggable="true" ondragstart="pd(event,'end')"><div class="edot" style="background:#ff8080"></div>Fim do Fluxo</div>
+      <div class="epi" style="color:#a3b1ff" onmousedown="palMD(event,'message')" onclick="palClick('message')"><div class="edot" style="background:#a3b1ff"></div>💬 Mensagem</div>
+      <div class="epi" style="color:#80e8d0" onmousedown="palMD(event,'question')" onclick="palClick('question')"><div class="edot" style="background:#80e8d0"></div>❓ Pergunta</div>
+      <div class="epi" style="color:#ffd080" onmousedown="palMD(event,'image')" onclick="palClick('image')"><div class="edot" style="background:#ffd080"></div>🖼️ Imagem</div>
+      <div class="epi" style="color:#ff9080" onmousedown="palMD(event,'video')" onclick="palClick('video')"><div class="edot" style="background:#ff9080"></div>🎥 Vídeo</div>
+      <div class="epi" style="color:#c080ff" onmousedown="palMD(event,'link')" onclick="palClick('link')"><div class="edot" style="background:#c080ff"></div>🔗 Link</div>
+      <div class="epi" style="color:#80c8ff" onmousedown="palMD(event,'condition')" onclick="palClick('condition')"><div class="edot" style="background:#80c8ff"></div>⚡ Condição</div>
+      <div class="epi" style="color:#80ffb0" onmousedown="palMD(event,'delay')" onclick="palClick('delay')"><div class="edot" style="background:#80ffb0"></div>⏳ Delay</div>
+      <div class="epi" style="color:#ff8080" onmousedown="palMD(event,'end')" onclick="palClick('end')"><div class="edot" style="background:#ff8080"></div>🏁 Fim do Fluxo</div>
     </div>
     <!-- Canvas -->
-    <div class="ecanvas" id="ecanvas" ondragover="e=>e.preventDefault()" ondrop="cdrop(event)">
+    <div class="ecanvas" id="ecanvas" ondragover="event.preventDefault()" ondrop="cdrop(event)">
       <svg id="esvg"></svg>
       <div id="enodes"></div>
       <div class="chint" id="chint">
@@ -659,7 +659,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
   <div class="mbox">
     <button class="mclose" onclick="closeModal()">✕</button>
     <div id="mlg">
-      <div class="mtitle">Entrar na Nebula</div>
+      <div class="mtitle">Entrar na Mandrake</div>
       <div class="msub">Bem-vindo de volta.</div>
       <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="lg-email" placeholder="seu@email.com"></div>
       <div class="fg"><label class="fl">Senha</label><input type="password" class="fi" id="lg-pass" placeholder="••••••••" onkeypress="if(event.key==='Enter')doLogin()"></div>
@@ -723,7 +723,7 @@ footer{border-top:1px solid var(--bdr);padding:48px 40px 28px;position:relative;
     <h2>🔗 Compartilhar Fluxo</h2>
     <p>Qualquer pessoa com este link pode acessar e interagir com o seu fluxo.</p>
     <div class="slink-row">
-      <div class="slink-field" id="share-link-field">nebula.app/flow/...</div>
+      <div class="slink-field" id="share-link-field">mandrake.app/flow/...</div>
       <button class="btn btn-primary btn-sm" onclick="copyLink()">Copiar</button>
     </div>
     <!-- QR Code simples via canvas -->
@@ -810,7 +810,7 @@ function doSignup(){
   us.push(u);localStorage.setItem('nbu',JSON.stringify(us));
   loginUser(u);
 }
-function doDemo(){loginUser({id:'demo',name:'Usuário Demo',email:'demo@nebula.app',pw:''})}
+function doDemo(){loginUser({id:'demo',name:'Usuário Demo',email:'demo@mandrake.app',pw:''})}
 function loginUser(u){
   CU=u;localStorage.setItem('nbs',JSON.stringify(u));
   closeModal();loadFlows();renderDash();showPage('dashboard');
@@ -950,7 +950,7 @@ function saveFlow(){
 function shareFlow(){
   saveFlow();
   const name=document.getElementById('flow-title').value||'fluxo';
-  const link=`nebula.app/flow/${curFId}`;
+  const link=`mandrake.app/flow/${curFId}`;
   document.getElementById('share-link-field').textContent=link;
   // Draw simple QR placeholder
   const cv=document.getElementById('qr-canvas');
@@ -1004,13 +1004,43 @@ function importFlow(){
 }
 
 // ─── CANVAS / NODES ───
-function pd(e,t){dragType=t;e.dataTransfer.effectAllowed='copy'}
-function cdrop(e){
-  e.preventDefault();if(!dragType)return;
-  const wr=document.getElementById('ecanvas').getBoundingClientRect();
-  const x=(e.clientX-wr.left-cOff.x)/cZoom;
-  const y=(e.clientY-wr.top-cOff.y)/cZoom;
-  addNode(dragType,x,y);dragType=null;
+// Palette drag via mousedown (works in sandboxed/iframe environments)
+function palMD(e,type){
+  e.preventDefault();
+  const wr=document.getElementById('ecanvas');
+  const wrRect=wr.getBoundingClientRect();
+  // Create ghost element following the cursor
+  const ghost=document.createElement('div');
+  ghost.style.cssText=`position:fixed;pointer-events:none;z-index:9999;padding:8px 14px;background:var(--deep);border:1px solid var(--bdr2);border-radius:8px;font-size:12px;color:var(--txt);opacity:.85;font-family:var(--fb);white-space:nowrap`;
+  ghost.textContent='+ '+NC[type]?.lbl||type;
+  document.body.appendChild(ghost);
+  function moveGhost(ev){
+    ghost.style.left=(ev.clientX+12)+'px';
+    ghost.style.top=(ev.clientY-12)+'px';
+  }
+  moveGhost(e);
+  document.addEventListener('mousemove',moveGhost);
+  document.addEventListener('mouseup',function drop(ev){
+    document.removeEventListener('mousemove',moveGhost);
+    document.removeEventListener('mouseup',drop);
+    ghost.remove();
+    // Check if dropped on canvas
+    const r=wr.getBoundingClientRect();
+    if(ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom){
+      const x=(ev.clientX-r.left-cOff.x)/cZoom;
+      const y=(ev.clientY-r.top-cOff.y)/cZoom;
+      addNode(type,x,y);
+    }
+  });
+}
+// Palette click fallback — single click adds node to center of visible canvas
+function palClick(type){
+  const wr=document.getElementById('ecanvas');
+  const r=wr.getBoundingClientRect();
+  const x=(r.width/2-cOff.x)/cZoom;
+  const y=(r.height/2-cOff.y)/cZoom;
+  addNode(type,x+Math.random()*60-30,y+Math.random()*60-30);
+  toast(NC[type]?.lbl+' adicionado — arraste para posicionar','ℹ');
 }
 function addNode(type,x,y){
   const id='n'+Date.now()+Math.random().toString(36).slice(2,5);
